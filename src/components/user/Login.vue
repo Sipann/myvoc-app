@@ -20,16 +20,16 @@
 
 <script>
 
-  import { loginUser } from '@/utils/users';
+import { loginUser } from '@/utils/users';
 
-  export default {
+export default {
 
-  data() {
-    return {
-      usernameLogin: '',
-      passwordLogin: '',
-    }
-  },
+  name: 'login',
+
+  data: () => ({
+    usernameLogin: '',
+    passwordLogin: '',
+  }),
 
   computed: {
     canLogin() {

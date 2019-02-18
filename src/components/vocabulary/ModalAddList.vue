@@ -50,6 +50,7 @@ export default {
     valid: false,
   }),
 
+
   computed: {
 
     noImport() {
@@ -73,7 +74,7 @@ export default {
     },
 
     // CHANGE LABEL ON BUTTON TO NAME OF ADDED FILE.
-    changeLabelInput: function(e) {
+    changeLabelInput(e) {
       this.labelInput = e.srcElement.files[0].name;
       this.file = e.srcElement.files[0];
     },

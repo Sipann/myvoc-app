@@ -7,25 +7,25 @@
 
 <script>
 
-  import UserInfo from '@/components/user/UserInfo.vue';
-  import UserHistory from '@/components/user/UserHistory.vue';
+import UserInfo from '@/components/user/UserInfo.vue';
+import UserHistory from '@/components/user/UserHistory.vue';
 
-  export default {
-    name: 'profile',
+export default {
+  name: 'profile',
 
-    components: {
-      'myvoc-user-info': UserInfo,
-      'myvoc-user-history': UserHistory,
+  components: {
+    'myvoc-user-info': UserInfo,
+    'myvoc-user-history': UserHistory,
+  },
+
+  computed: {
+    isMobile() {
+      let agent = window.navigator.userAgent;
+      return agent.includes('Mobi');
     },
-
-    computed: {
-      isMobile() {
-        let agent = window.navigator.userAgent;
-        return agent.includes('Mobi');
-      },
-    }
-
   }
+
+}
 
 </script>
 
@@ -48,6 +48,6 @@
     grid-column-start: 4;
     grid-row-start: 2;
   }
-  
+
 
 </style>

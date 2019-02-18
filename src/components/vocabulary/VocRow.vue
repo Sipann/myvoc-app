@@ -228,7 +228,7 @@
       openConfirmModal() { this.confirm = true; },
 
       // EDIT WORD => ALLOWS USER TO ENTER A NEW CATEGORY.
-      watchSelectedCategory: function() {
+      watchSelectedCategory() {
         if (this.selectedCategory === 'New Category') { this.enter_new_category = true; }
         else { this.enter_new_category = false; }
       },   // END OF watchSelectedCategory() method

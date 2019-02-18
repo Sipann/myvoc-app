@@ -1,111 +1,108 @@
 <template lang="html">
 
-      <div class="main-div">
-        <div class="word" v-for="word in words">
-          <p>{{word[0]}}</p>
-          <p>{{word[1]}}</p>
-        </div>
-
-
-        <v-card class="myvoc" width="30rem" height="20rem">
-          <v-card-text class="card-text">
-            <div class="card-content" :class="{ done: animCompleted }">
-              <div class="spanM" ref="spanM"><p>M</p></div>
-              <div class="spanY" ref="spanY"><p>Y</p></div>
-              <div class="spanV" ref="spanV"><p>V</p></div>
-              <div class="spanO" ref="spanO"><p>O</p></div>
-              <div class="spanC" ref="spanC"><p>C</p></div>
-            </div>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" flat to="/demo">Show Me a Demo</v-btn>
-            <v-btn color="primary" flat to="/dashboard">Go to My Dashboard</v-btn>
-          </v-card-actions>
-        </v-card>
-
+    <div class="main-div">
+      <div class="word" v-for="word in words">
+        <p>{{word[0]}}</p>
+        <p>{{word[1]}}</p>
       </div>
 
-  </template>
 
-  <script>
+      <v-card class="myvoc" width="30rem" height="20rem">
+        <v-card-text class="card-text">
+          <div class="card-content" :class="{ done: animCompleted }">
+            <div class="spanM" ref="spanM"><p>M</p></div>
+            <div class="spanY" ref="spanY"><p>Y</p></div>
+            <div class="spanV" ref="spanV"><p>V</p></div>
+            <div class="spanO" ref="spanO"><p>O</p></div>
+            <div class="spanC" ref="spanC"><p>C</p></div>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" flat to="/demo">Show Me a Demo</v-btn>
+          <v-btn color="primary" flat to="/dashboard">Go to My Dashboard</v-btn>
+        </v-card-actions>
+      </v-card>
 
-    import { homeAnimation } from '@/assets/anim-home';
+    </div>
 
-    export default {
-      name: 'home',
+</template>
 
+<script>
 
-      data() {
-        return {
-          words: [
-            ['amusant', 'fun'],
-            ['goal', 'objectif'],
-            ['apprendre', 'learn'],
-            ['practice', "s'entraîner"],
-            ['game', 'jeu'],
-            ['world', 'monde'],
-            ['couramment', 'fluently'],
-            ['effortless', 'sans effort'],
-            ['volonté', 'willpower'],
-            ['memorize', 'mémoriser'],
-            ['speak', 'parler'],
-            ['leisure', 'loisir'],
-            ['audace', 'daring'],
-          ],
-          animCompleted: false,
-        }
-      },
+import { homeAnimation } from '@/assets/anim-home';
 
-      mounted() {
-        let width = window.innerWidth;
-        let height = window.innerHeight;
-        let words = document.querySelectorAll('.main-div .word');
+export default {
+  name: 'home',
 
-        for (let i=0; i<words.length; i++) {
-          let transitionX = Math.floor(Math.random() * 25);
-          let transitionY = Math.floor(Math.random() * 25);
-          let animationTime = Math.max(Math.random() * 12, 12);
-          words[i].style.setProperty('--transitionx1', `${transitionX}px`);
-          words[i].style.setProperty('--transitiony1', `${transitionY}px`);
-          words[i].style.setProperty('--animation-time', `${animationTime}s`);
-        }
+  data: () => ({
+    words: [
+      ['amusant', 'fun'],
+      ['goal', 'objectif'],
+      ['apprendre', 'learn'],
+      ['practice', "s'entraîner"],
+      ['game', 'jeu'],
+      ['world', 'monde'],
+      ['couramment', 'fluently'],
+      ['effortless', 'sans effort'],
+      ['volonté', 'willpower'],
+      ['memorize', 'mémoriser'],
+      ['speak', 'parler'],
+      ['leisure', 'loisir'],
+      ['audace', 'daring'],
+    ],
+    animCompleted: false,
+  }),
 
-        let vm = this;
-        homeAnimation(this.$refs.spanM, this.$refs.spanY, this.$refs.spanV, this.$refs.spanO, this.$refs.spanC, vm);
+  mounted() {
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let words = document.querySelectorAll('.main-div .word');
 
-      },
-
-      watch: {
-        animCompleted: function(value) {
-          if (value === true) {
-            console.log('animCompleted now true');
-            this.backgroundLogo();
-          }
-        }
-      },
-
-      methods: {
-
-        backgroundLogo() {
-          if (this.animCompleted === true) {
-            console.log('this.animCompleted === true');
-            return `background-clip: text;
-            -webkit-background-clip: text;
-            background-image: url('../../assets/background2.png');
-            color: transparent;
-            -webkit-text-stroke-width: 4px;
-            -webkit-text-stroke-color: #000;`;
-          }
-        }
-
-      },
-
-
+    for (let i=0; i<words.length; i++) {
+      let transitionX = Math.floor(Math.random() * 25);
+      let transitionY = Math.floor(Math.random() * 25);
+      let animationTime = Math.max(Math.random() * 12, 12);
+      words[i].style.setProperty('--transitionx1', `${transitionX}px`);
+      words[i].style.setProperty('--transitiony1', `${transitionY}px`);
+      words[i].style.setProperty('--animation-time', `${animationTime}s`);
     }
 
-  </script>
+    let vm = this;
+    homeAnimation(this.$refs.spanM, this.$refs.spanY, this.$refs.spanV, this.$refs.spanO, this.$refs.spanC, vm);
 
-  <style lang="css" scoped>
+  },
+
+  watch: {
+    animCompleted: function(value) {
+      if (value === true) {
+        console.log('animCompleted now true');
+        this.backgroundLogo();
+      }
+    }
+  },
+
+  methods: {
+
+    backgroundLogo() {
+      if (this.animCompleted === true) {
+        console.log('this.animCompleted === true');
+        return `background-clip: text;
+        -webkit-background-clip: text;
+        background-image: url('../../assets/background2.png');
+        color: transparent;
+        -webkit-text-stroke-width: 4px;
+        -webkit-text-stroke-color: #000;`;
+      }
+    }
+
+  },
+
+
+}
+
+</script>
+
+<style lang="css" scoped>
 
 body {
   margin: 0;
@@ -305,4 +302,4 @@ Si on retire cela => remettre cas 1 dans le html. */
   opacity: 0;
 }
 
-  </style>
+</style>

@@ -129,9 +129,7 @@ export default {
     },  // END OF saveNewWord() method
 
 
-
-
-    watchSelectedCategory: function() {
+    watchSelectedCategory() {
       if (this.selectedCategory === 'New Category' || this.selectedCategory === 'Nouvelle Catégorie') {
         this.enter_new_category = true;
       } else {

@@ -129,313 +129,305 @@ const sliderMaxX = 240;
 const coldGradient = { start: '#5564c2', end: '#3a2e8d' };
 const hotGradient = { start: '#f0ae4b', end: '#9b4d1b' };
 
-  export default {
-    name: 'demo',
+export default {
+  name: 'demo',
+
+  data: () => ({
+    screens: ['Dashboard', 'MyVoc-List', 'Profile'],
+    dragging: false,
+    initialMouseX: 0,
+    sliderX: 0,
+    initialSliderX: 0,
+    gradientStart: coldGradient.start,
+    gradientEnd: coldGradient.end,
+
+    sliderPosition: 0,
+    diff0: 0,
+    diff1: 0,
+    diff2: 0,
+    diffDashboard: 0,
+    diffVoclist: 100,
+    diffProfile: 100,
+    lift: 12,
+
+    explainDashboard: true,
+    explainVoclist: false,
+    explainProfile: false,
+    initialCurrentScreen: 'explainDashboard',
+    isPlaying: false,
+    pauseBtnLabel: 'Pause',
+    // isOnPause: true,
+    explainingTextIndex: 0,
+    explainingTextList: [
+      '',
+      'This is your dashboard.',
+      'Here you can manage your vocabulary.',
+      'You can add a word.',
+      'Or a whole list of them.',
+      'Here you can manage your tests.',
+      'You can add up to 5 custom tests.',
+      'Or just launch a quick standard one.',
+      "if you're online, you can synchronize your local database with the cloud.",
+    ],
+
+    explainVoclistList: [
+      '',
+      'This is your vocabulary list dashboard.',
+      'Here will appear your saved list of words.',
+      'You can filter it by category or by tag.',
+      'For each word, you can edit it...',
+      '... or delete it.',
+      'Or you can tick the tiny box on its left...',
+      'to update or delete several of them at once.',
+    ],
+    explainProfileList: [
+      '',
+      'This is your profile dashboard.',
+      'Here you can manage your personnal info.',
+      'Here you can select what history you want to view',
+      'It will appear right here.'
+    ],
+  }),
 
 
-    data() {
-      return {
-        screens: ['Dashboard', 'MyVoc-List', 'Profile'],
-        dragging: false,
-        initialMouseX: 0,
-        sliderX: 0,
-        initialSliderX: 0,
-        gradientStart: coldGradient.start,
-        gradientEnd: coldGradient.end,
+  computed: {
 
-        sliderPosition: 0,
-        diff0: 0,
-        diff1: 0,
-        diff2: 0,
-        diffDashboard: 0,
-        diffVoclist: 100,
-        diffProfile: 100,
-        lift: 12,
+    // BEGINNING OF GRAPH ANIMATIONS
 
-        explainDashboard: true,
-        explainVoclist: false,
-        explainProfile: false,
-        initialCurrentScreen: 'explainDashboard',
-        isPlaying: false,
-        pauseBtnLabel: 'Pause',
-        // isOnPause: true,
-        explainingTextIndex: 0,
-        explainingTextList: [
-          '',
-          'This is your dashboard.',
-          'Here you can manage your vocabulary.',
-          'You can add a word.',
-          'Or a whole list of them.',
-          'Here you can manage your tests.',
-          'You can add up to 5 custom tests.',
-          'Or just launch a quick standard one.',
-          "if you're online, you can synchronize your local database with the cloud.",
-        ],
+    currentScreen() {
+      let screens = [ { name: 'explainDashboard', value: this.explainDashboard},
+                      { name: 'explainVoclist', value: this.explainVoclist},
+                      { name: 'explainProfile', value: this.explainProfile} ];
+      let current = screens.filter(item => item.value === true);
+      return current[0].name;
+    },
 
-        explainVoclistList: [
-          '',
-          'This is your vocabulary list dashboard.',
-          'Here will appear your saved list of words.',
-          'You can filter it by category or by tag.',
-          'For each word, you can edit it...',
-          '... or delete it.',
-          'Or you can tick the tiny box on its left...',
-          'to update or delete several of them at once.',
-        ],
-        explainProfileList: [
-          '',
-          'This is your profile dashboard.',
-          'Here you can manage your personnal info.',
-          'Here you can select what history you want to view',
-          'It will appear right here.'
-        ],
+    explainingText() {
+      if (this.explainDashboard) { return this.explainingTextList[this.explainingTextIndex]; }
+      if (this.explainVoclist) { return  this.explainVoclistList[this.explainingTextIndex]; }
+      if (this.explainProfile) { return this.explainProfileList[this.explainingTextIndex]; }
+    },
+
+    timeLine() {
+      if (this.explainDashboard) {
+        let vm = this;
+        let dashboardTimeline = animExplainDashboard(this.$refs.dashboardBorder, this.$refs.cardVocBorder, this.$refs.cardTestBorder, this.$refs.glass, this.$refs.btnSaveWord, this.$refs.btnSaveList, this.$refs.btnCustomTest, this.$refs.btnQuickTest, this.$refs.btnSync, vm);
+        let myTimeline = Object.assign({}, dashboardTimeline);
+        myTimeline.name = 'dashboardTimeline';
+        return myTimeline;
+      } else if (this.explainVoclist) {
+        let vm = this;
+        let voclistTimeline = animExplainVoclist(this.$refs.voclistBorder, this.$refs.listWords, this.$refs.filterBox, this.$refs.lineWord, this.$refs.editBox, this.$refs.deleteBox, this.$refs.checkBox, this.$refs.updateBox, vm);
+        let myTimeline = Object.assign({}, voclistTimeline);
+        myTimeline.name = 'voclistTimeline';
+        return myTimeline;
+      } else if (this.explainProfile) {
+        let vm = this;
+        let profileTimeline = animExplainProfile(this.$refs.profileBorder, this.$refs.cardInfo, this.$refs.selectHistory, this.$refs.arrowDown, this.$refs.graphHistory, vm);
+        let myTimeline = Object.assign({}, profileTimeline);
+        myTimeline.name = 'profileTimeline';
+        return myTimeline;
+      } else {
+        return 'no timeline';
       }
     },
 
 
-    computed: {
-
-      // BEGINNING OF GRAPH ANIMATIONS
-
-      currentScreen() {
-        let screens = [ { name: 'explainDashboard', value: this.explainDashboard},
-                        { name: 'explainVoclist', value: this.explainVoclist},
-                        { name: 'explainProfile', value: this.explainProfile} ];
-        let current = screens.filter(item => item.value === true);
-        return current[0].name;
-      },
-
-      explainingText() {
-        if (this.explainDashboard) { return this.explainingTextList[this.explainingTextIndex]; }
-        if (this.explainVoclist) { return  this.explainVoclistList[this.explainingTextIndex]; }
-        if (this.explainProfile) { return this.explainProfileList[this.explainingTextIndex]; }
-      },
-
-      timeLine() {
-        if (this.explainDashboard) {
-          let vm = this;
-          let dashboardTimeline = animExplainDashboard(this.$refs.dashboardBorder, this.$refs.cardVocBorder, this.$refs.cardTestBorder, this.$refs.glass, this.$refs.btnSaveWord, this.$refs.btnSaveList, this.$refs.btnCustomTest, this.$refs.btnQuickTest, this.$refs.btnSync, vm);
-          let myTimeline = Object.assign({}, dashboardTimeline);
-          myTimeline.name = 'dashboardTimeline';
-          return myTimeline;
-        } else if (this.explainVoclist) {
-          let vm = this;
-          let voclistTimeline = animExplainVoclist(this.$refs.voclistBorder, this.$refs.listWords, this.$refs.filterBox, this.$refs.lineWord, this.$refs.editBox, this.$refs.deleteBox, this.$refs.checkBox, this.$refs.updateBox, vm);
-          let myTimeline = Object.assign({}, voclistTimeline);
-          myTimeline.name = 'voclistTimeline';
-          return myTimeline;
-        } else if (this.explainProfile) {
-          let vm = this;
-          let profileTimeline = animExplainProfile(this.$refs.profileBorder, this.$refs.cardInfo, this.$refs.selectHistory, this.$refs.arrowDown, this.$refs.graphHistory, vm);
-          let myTimeline = Object.assign({}, profileTimeline);
-          myTimeline.name = 'profileTimeline';
-          return myTimeline;
-        } else {
-          return 'no timeline';
-        }
-      },
 
 
-
-
-      // END OF GRAPH ANIMATIONS
+    // END OF GRAPH ANIMATIONS
 
 //////////////////////////////////////////////////
-      // BEGINNING OF SLIDER
+    // BEGINNING OF SLIDER
 
-      screenDashboardPos() {
-        return (this.$refs.dashboard.getBoundingClientRect().left + 50);
-      },
-
-      screenVoclistPos() {
-        return (this.$refs.voclist.getBoundingClientRect().left + 50);
-      },
-
-      screenProfilePos() {
-        return (this.$refs.profile.getBoundingClientRect().left + 50);
-      },
-
-
-      screenSelectorWidth() {
-        let screenSelector = this.$refs.screenSelector;
-        return window.getComputedStyle(screenSelector).width;
-      },
-
-
-      sliderStyle() {
-        return `transform: translate3d(${this.sliderX}px, 0, 0)`;
-      },
-
-
-      bgStyle() {
-        return `background: linear-gradient(to bottom right, ${this.gradientStart}, ${this.gradientEnd})`;
-      },
-
-      // END OF SLIDER
+    screenDashboardPos() {
+      return (this.$refs.dashboard.getBoundingClientRect().left + 50);
     },
 
-    watch: {
-      isPlaying: function(value) {
-        if (value === false) {
-          pauseAnimBtn(this.$refs.arrow);
-        }
-      },
+    screenVoclistPos() {
+      return (this.$refs.voclist.getBoundingClientRect().left + 50);
+    },
+
+    screenProfilePos() {
+      return (this.$refs.profile.getBoundingClientRect().left + 50);
     },
 
 
-    methods: {
+    screenSelectorWidth() {
+      let screenSelector = this.$refs.screenSelector;
+      return window.getComputedStyle(screenSelector).width;
+    },
 
-      explainPlayPause() {
-        if (this.isPlaying === false) {
-          console.log('this.isPlaying', this.isPlaying);
-          console.log('this.isPlaying was false - setting it to true');
-          this.isPlaying = true;
-          restartAnimBtn(this.$refs.arrow);
-          // if (this.currentScreen !== this.initialCurrentScreen) {
-          //   this.initialCurrentScreen = this.currentScreen;
-          //   this.timeLine.seek(0);
-          // }
-          // this.timeLine.play();
-          this.timeLine.restart();
-          // @TODO => replay l'anim si elle a déjà tourné 1 fois.
-          // if (this.timeLine.complete) { console.log('has completed, restarting it'); this.timeLine.restart();}
-          // else { console.log('has not completed yet'); this.timeLine.play(); }
-        } else if (this.isPlaying === true) {
-          console.log('this.isPlaying', this.isPlaying);
-          console.log('this.isPlaying was true - setting it to false');
-          this.isPlaying = false;
-          pauseAnimBtn(this.$refs.arrow);
-          this.timeLine.pause();
-        }
-      },
+
+    sliderStyle() {
+      return `transform: translate3d(${this.sliderX}px, 0, 0)`;
+    },
+
+
+    bgStyle() {
+      return `background: linear-gradient(to bottom right, ${this.gradientStart}, ${this.gradientEnd})`;
+    },
+
+    // END OF SLIDER
+  },
+
+  watch: {
+    isPlaying: function(value) {
+      if (value === false) {
+        pauseAnimBtn(this.$refs.arrow);
+      }
+    },
+  },
+
+
+  methods: {
+
+    explainPlayPause() {
+      if (this.isPlaying === false) {
+        console.log('this.isPlaying', this.isPlaying);
+        console.log('this.isPlaying was false - setting it to true');
+        this.isPlaying = true;
+        restartAnimBtn(this.$refs.arrow);
+        // if (this.currentScreen !== this.initialCurrentScreen) {
+        //   this.initialCurrentScreen = this.currentScreen;
+        //   this.timeLine.seek(0);
+        // }
+        // this.timeLine.play();
+        this.timeLine.restart();
+        // @TODO => replay l'anim si elle a déjà tourné 1 fois.
+        // if (this.timeLine.complete) { console.log('has completed, restarting it'); this.timeLine.restart();}
+        // else { console.log('has not completed yet'); this.timeLine.play(); }
+      } else if (this.isPlaying === true) {
+        console.log('this.isPlaying', this.isPlaying);
+        console.log('this.isPlaying was true - setting it to false');
+        this.isPlaying = false;
+        pauseAnimBtn(this.$refs.arrow);
+        this.timeLine.pause();
+      }
+    },
 
 
 
 
 ////////////////////////////////////////////
 
-      // BEGINNING OF SLIDER
+    // BEGINNING OF SLIDER
 
-      screenDashboardStyle() {
-        const distY = Math.abs(this.lift / (this.diffDashboard/40 + 1));
-        // return `transform: translate3d(0, ${-distY}px, 0)`;
-        // console.log('distY', distY);
-        if (distY > 6) {
-          this.explainDashboard = true;
-          this.explainVoclist = false;
-          this.explainProfile = false;
-          return `transform: translate3d(0, ${-distY}px, 0); color: deeppink;` }
-        else { return `transform: translate3d(0, ${-distY}px, 0)`;}
+    screenDashboardStyle() {
+      const distY = Math.abs(this.lift / (this.diffDashboard/40 + 1));
+      // return `transform: translate3d(0, ${-distY}px, 0)`;
+      // console.log('distY', distY);
+      if (distY > 6) {
+        this.explainDashboard = true;
+        this.explainVoclist = false;
+        this.explainProfile = false;
+        return `transform: translate3d(0, ${-distY}px, 0); color: deeppink;` }
+      else { return `transform: translate3d(0, ${-distY}px, 0)`;}
 
-      },
+    },
 
-      screenVoclistStyle() {
-        const distY = this.lift / (this.diffVoclist/40 + 1);
-        if (distY > 6) {
-          this.explainDashboard = false;
-          this.explainVoclist = true;
-          this.explainProfile = false;
-          return `transform: translate3d(0, ${-distY}px, 0); color: deeppink;` }
-        else { return `transform: translate3d(0, ${-distY}px, 0)`;}
-      },
+    screenVoclistStyle() {
+      const distY = this.lift / (this.diffVoclist/40 + 1);
+      if (distY > 6) {
+        this.explainDashboard = false;
+        this.explainVoclist = true;
+        this.explainProfile = false;
+        return `transform: translate3d(0, ${-distY}px, 0); color: deeppink;` }
+      else { return `transform: translate3d(0, ${-distY}px, 0)`;}
+    },
 
-      screenProfileStyle() {
-        const distY = Math.abs(this.lift / (this.diffProfile/40 + 1));
-        if (distY > 6) {
-          this.explainDashboard = false;
-          this.explainVoclist = false;
-          this.explainProfile = true;
-          return `transform: translate3d(0, ${-distY}px, 0); color: deeppink;` }
-        else { return `transform: translate3d(0, ${-distY}px, 0)`;}
-      },
-
-
-      startDrag (e) {
-        this.dragging = true;
-        this.initialMouseX = e.pageX;
-        this.initialSliderX = this.sliderX;
-
-      },
-
-      stopDrag() {
-
-        // SLIDER
-        this.dragging = false;
-
-        // GRAPH ANIMATIONS
-
-        if (this.initialCurrentScreen !== this.currentScreen) {
-          console.log(`this.initialCurrentScreen: ${this.initialCurrentScreen}`);
-          console.log(`this.currentScreen: ${this.currentScreen}`);
-
-        } else { console.log('same screen'); }
-      },
-
-      mouseMoving(e) {
-        if (this.dragging) {
-          // Move the slider
-          const dragAmount = e.pageX - this.initialMouseX;
-          const targetX = this.initialSliderX + dragAmount;
-          // Keep slider inside limits
-          this.sliderX = Math.max(Math.min(targetX, sliderMaxX), sliderMinX);
+    screenProfileStyle() {
+      const distY = Math.abs(this.lift / (this.diffProfile/40 + 1));
+      if (distY > 6) {
+        this.explainDashboard = false;
+        this.explainVoclist = false;
+        this.explainProfile = true;
+        return `transform: translate3d(0, ${-distY}px, 0); color: deeppink;` }
+      else { return `transform: translate3d(0, ${-distY}px, 0)`;}
+    },
 
 
-          let sliderButton = document.querySelector('.slider-button');
-          let sliderButtonLeft = sliderButton.getBoundingClientRect().left;
-          this.sliderPosition = sliderButtonLeft + 25 ;
+    startDrag (e) {
+      this.dragging = true;
+      this.initialMouseX = e.pageX;
+      this.initialSliderX = this.sliderX;
+
+    },
+
+    stopDrag() {
+
+      // SLIDER
+      this.dragging = false;
+
+      // GRAPH ANIMATIONS
+
+      if (this.initialCurrentScreen !== this.currentScreen) {
+        console.log(`this.initialCurrentScreen: ${this.initialCurrentScreen}`);
+        console.log(`this.currentScreen: ${this.currentScreen}`);
+
+      } else { console.log('same screen'); }
+    },
+
+    mouseMoving(e) {
+      if (this.dragging) {
+        // Move the slider
+        const dragAmount = e.pageX - this.initialMouseX;
+        const targetX = this.initialSliderX + dragAmount;
+        // Keep slider inside limits
+        this.sliderX = Math.max(Math.min(targetX, sliderMaxX), sliderMinX);
 
 
-          let diffDashboard = parseInt(this.sliderPosition) - parseInt(this.screenDashboardPos);
-          this.diffDashboard = Math.abs(diffDashboard);
-
-          let diffVoclist = parseInt(this.sliderPosition) - parseInt(this.screenVoclistPos);
-          this.diffVoclist = Math.abs(diffVoclist);
-
-          let diffProfile = parseInt(this.sliderPosition) - parseInt(this.screenProfilePos);
-          this.diffProfile = Math.abs(diffProfile);
+        let sliderButton = document.querySelector('.slider-button');
+        let sliderButtonLeft = sliderButton.getBoundingClientRect().left;
+        this.sliderPosition = sliderButtonLeft + 25 ;
 
 
-          console.log('this.dragging while mousemoving');
-          this.isPlaying = false;
-          this.timeLine.pause();
-          pauseAnimBtn(this.$refs.arrow);
+        let diffDashboard = parseInt(this.sliderPosition) - parseInt(this.screenDashboardPos);
+        this.diffDashboard = Math.abs(diffDashboard);
 
-          if (this.timeLine.name === 'dashboardTimeline') {
-            if (this.diffDashboard > 70) {
-              this.timeLine.restart();
-              this.timeLine.pause();
-              this.explainingTextIndex = 0;
-            }
+        let diffVoclist = parseInt(this.sliderPosition) - parseInt(this.screenVoclistPos);
+        this.diffVoclist = Math.abs(diffVoclist);
+
+        let diffProfile = parseInt(this.sliderPosition) - parseInt(this.screenProfilePos);
+        this.diffProfile = Math.abs(diffProfile);
+
+
+        console.log('this.dragging while mousemoving');
+        this.isPlaying = false;
+        this.timeLine.pause();
+        pauseAnimBtn(this.$refs.arrow);
+
+        if (this.timeLine.name === 'dashboardTimeline') {
+          if (this.diffDashboard > 70) {
+            this.timeLine.restart();
+            this.timeLine.pause();
+            this.explainingTextIndex = 0;
           }
-
-          if (this.timeLine.name === 'voclistTimeline') {
-            if (this.diffVoclist > 70) {
-              this.timeLine.restart();
-              this.timeLine.pause();
-              this.explainingTextIndex = 0;
-            }
-          }
-
-          if (this.timeLine.name === 'profileTimeline') {
-            if (this.diffProfile > 70) {
-              this.timeLine.restart();
-              this.timeLine.pause();
-              this.explainingTextIndex = 0;
-            }
-          }
-
-
-
-
         }
-      },
+
+        if (this.timeLine.name === 'voclistTimeline') {
+          if (this.diffVoclist > 70) {
+            this.timeLine.restart();
+            this.timeLine.pause();
+            this.explainingTextIndex = 0;
+          }
+        }
+
+        if (this.timeLine.name === 'profileTimeline') {
+          if (this.diffProfile > 70) {
+            this.timeLine.restart();
+            this.timeLine.pause();
+            this.explainingTextIndex = 0;
+          }
+        }
+
+      }
+    },
+
+  },  // END OF methods
 
 
-
-    },  // END OF methods
-
-
-  }
+}
 
 </script>
 
